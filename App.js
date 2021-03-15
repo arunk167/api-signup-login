@@ -1,8 +1,9 @@
 import React,{Component} from 'react'
 import {View} from 'react-native'
 import FlashMessage from 'react-native-flash-message';
+import { UserContext } from './src/context/context';
 import Routes from './src/Navigation/Routes'
-import { getUserData } from './src/utils/utils';
+import { clearUserData, getUserData } from './src/utils/utils';
 
 
  class App extends  Component{
@@ -24,12 +25,28 @@ import { getUserData } from './src/utils/utils';
         console.log(error)
       })
    }
+   onLogin=()=>{
+     this.setState({
+       isLogin:true
+     })
+   }
+   onLogout=()=>{
+     this.setState({
+       isLogin:false
+     })
+     clearUserData();
+   }
    render(){
     const {isLogin}=this.state
      return(
     
       <>
-         <Routes isLogin={isLogin}/>
+      <UserContext.Provider value={{
+        isLogin:this.state.isLogin,onLogin:this.onLogin,onLogout:this.onLogout
+      }} >
+         <Routes/>
+         
+         </UserContext.Provider>
          <FlashMessage position='top'/>
        </>
        

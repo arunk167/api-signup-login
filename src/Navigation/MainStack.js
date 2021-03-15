@@ -9,9 +9,7 @@ function MainStack(){
         <React.Fragment>
            
             <Stack.Screen name={navigationStrings.HOMEPAGE} component={Homepage} 
-            options={{
-                headerShown:false
-            }} />
+             />
             
         </React.Fragment>
     )

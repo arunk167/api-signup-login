@@ -7,6 +7,8 @@ import validator from '../../utils/validation';
 import colors from '../../styles/colors';
 import {showMessage} from 'react-native-flash-message';
 import navigationStrings from '../../constants/navigationStrings';
+import { UserContext } from '../../context/context';
+
 
 
 
@@ -23,6 +25,7 @@ export default class Login extends Component{
             isLoading: false,
         }
     }
+    static contextType=UserContext;
     _onChangeText(key){
         return (value)=>{
             this.setState({
@@ -80,7 +83,7 @@ export default class Login extends Component{
                       icon: 'success',
                       message: "Login success",
                     });
-                navigation.navigate(navigationStrings.HOMEPAGE)
+               this.context.onLogin();
         
                   
             }).catch(error=>{

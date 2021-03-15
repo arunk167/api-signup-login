@@ -94,7 +94,7 @@ export async function apiReq(
       .catch((error) => {
        console.log(data)
         console.log(error);
-        console.log(error && error.response, 'the error respone');
+        console.log(error && error.response, 'the error response');
         if (error && error.response && error.response.status === 401) {
           const {dispatch} = store;
           dispatch({

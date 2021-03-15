@@ -9,7 +9,10 @@ import {
   TextInput,
   ScrollView,
   Button,
+  Modal,
+  PermissionsAndroid
 } from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
 
 import colors from '../../styles/colors';
 
@@ -22,6 +25,8 @@ import Loader from '../../Component/Loader';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import api from '../../apis';
 import navigationStrings from '../../constants/navigationStrings';
+import imagePath from '../../constants/imagePath';
+
 
 
 export default class Login extends Component {
@@ -38,6 +43,8 @@ export default class Login extends Component {
       confirmPassword: '',
       dateOfBirth: '',
       isLoading: false,
+      avatarSource: imagePath.logo,
+      ismodalVisable: false,
     };
   }
   moveBack=()=>{
@@ -149,6 +156,7 @@ export default class Login extends Component {
 
           }
         );
+        
     }
   };
   movetoLogin=()=>{
@@ -156,6 +164,82 @@ export default class Login extends Component {
     const {navigation}=this.props
     navigation.navigate(navigationStrings.LOGIN)
   }
+
+//  openGallery
+
+  openGallery = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: ' Gallery Permission',
+          message: 'We needs access to your Gallery',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+       
+
+        const options = {
+          title: 'Select Avatar',
+          customButtons: [{name: 'myntra', title: 'Choose Photo from gallery'}],
+          storageOptions: {
+            skipBackup: true,
+            path: 'images',
+            saveToPhotos: true,
+          },
+        };
+        ImagePicker.launchImageLibrary(options, (response) => {
+          console.log('Response = ', response);
+
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+          } else if (response.customButton) {
+            console.log('User tapped custom button: ', response.customButton);
+          } else {
+            const source = {uri: response.uri};
+              this.uploadImage(response)
+             
+              this.setState({
+              avatarSource: source, 
+              ismodalVisable: false,
+            });
+          }
+        });
+      } else {
+        console.log('Gallery permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  uploadImage=(response)=>{
+  
+    const apiData =new FormData();
+    apiData.append('image', {
+      uri:response.uri,
+      type: response.type,
+       name: response.fileName,
+      
+
+     });
+    api.uploadfile(apiData).then((res)=>{
+      showMessage({
+        type: 'success',
+        icon: 'success',
+        message: "Image uplaod success",
+      });
+      console.log(res)
+     }).catch(error=>console.log(error,"fail")) 
+
+      
+  }
+
+
 
   render() {
     const {
@@ -167,12 +251,17 @@ export default class Login extends Component {
       confirmPassword,
       dateOfBirth,
       isLoading,
+      avatarSource,
+      ismodalVisable
+      
     } = this.state;
    
     return (
       <KeyboardAwareScrollView style={styles.mainView}>
         <Header moveBack={this.moveBack}/>
-        <Image style={styles.userImage} source={{uri: profileImage}} />
+        <TouchableOpacity onPress={this.openGallery}  >
+        <Image style={styles.userImage}  source={avatarSource} />
+        </TouchableOpacity>
         <TextInput
           placeholder="Name"
           style={styles.textInput}
@@ -224,6 +313,9 @@ export default class Login extends Component {
           </Text>
         </View>
         <Loader isLoading={isLoading} />
+        
+        
+   
       </KeyboardAwareScrollView>
     );
   }
@@ -233,6 +325,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: colors.white,
   },
+ 
   userImage: {
     height: 90,
     width: 90,
@@ -275,4 +368,6 @@ borderRadius:5,
   policyText: {
     color: colors.themeColor,
   },
+ 
+  
 });
