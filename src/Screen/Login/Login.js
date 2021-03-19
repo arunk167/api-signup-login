@@ -8,6 +8,7 @@ import colors from '../../styles/colors';
 import {showMessage} from 'react-native-flash-message';
 import navigationStrings from '../../constants/navigationStrings';
 import { UserContext } from '../../context/context';
+import Header from '../../Component/Header';
 
 
 
@@ -83,7 +84,7 @@ export default class Login extends Component{
                       icon: 'success',
                       message: "Login success",
                     });
-               this.context.onLogin();
+              this.context.onLogin();
         
                   
             }).catch(error=>{
@@ -112,9 +113,7 @@ export default class Login extends Component{
         const{userEmail,userPassword,isLoading,profileImage}=this.state
         return(
             <View style={{flex:1,backgroundColor:colors.white}}>
-              <View style={styles.loginHeader}>
-                <Text style={styles.headerText}>Login</Text>
-              </View>
+              {/* <Header screenName={'Login'}/> */}
                  <View style={styles.imageView}>
                  <Image style={styles.userImage} source={{uri: profileImage}} />
                  </View>

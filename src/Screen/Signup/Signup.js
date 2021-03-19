@@ -50,6 +50,7 @@ export default class Login extends Component {
   moveBack=()=>{
       const {navigation}=this.props
     navigation.navigate(navigationStrings.LOGIN)
+   
 }
 
   _onChangeText(key) { 
@@ -258,7 +259,7 @@ export default class Login extends Component {
    
     return (
       <KeyboardAwareScrollView style={styles.mainView}>
-        <Header moveBack={this.moveBack}/>
+        {/* <Header moveBack={this.moveBack} screenName={'Signup'} isBackButton={true}/> */}
         <TouchableOpacity onPress={this.openGallery}  >
         <Image style={styles.userImage}  source={avatarSource} />
         </TouchableOpacity>
